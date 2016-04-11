@@ -26,6 +26,7 @@ class m130524_201442_init extends Migration
             'domicilio' => $this->string()->notNull(),
             'cuenta_bancaria' => $this->bigInteger()->notNull(),
             'balance' => $this->decimal(10,2)->defaultValue(0),
+            'id_banco' => $this->integer()->notNull(),
 
             'fecha_creado' => $this->dateTime()->defaultValue('NOW()'),
             'fecha_modificado' => $this->dateTime(),
@@ -35,6 +36,16 @@ class m130524_201442_init extends Migration
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ], $tableOptions);
+
+        //Agregar llave foranea
+        $this->addForeignKey(
+            'fk-post-author_id',    //Nombre de la llave foranea
+            'post',                 //Nombre de la tabla destino
+            'author_id',            //Nombre del campo destino
+            'user',                 //Nombre de la tabla origen
+            'id',                   //Nombre del campo origen
+            'CASCADE'
+        );
     }
 
     public function down()
