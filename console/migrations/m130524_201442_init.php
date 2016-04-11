@@ -27,7 +27,9 @@ class m130524_201442_init extends Migration
             'cuenta_bancaria' => $this->bigInteger()->notNull(),
             'balance' => $this->decimal(10,2)->defaultValue(0),
 
-            'fecha_creado' => $this->dateTime()->defaultValue(),
+            'fecha_creado' => $this->dateTime()->defaultValue('NOW()'),
+            'fecha_modificado' => $this->dateTime(),
+            'fecha_eliminado' => $this->dateTime(),
 
             'status' => $this->smallInteger()->notNull()->defaultValue(10),
             'created_at' => $this->integer()->notNull(),
