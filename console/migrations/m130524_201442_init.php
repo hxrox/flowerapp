@@ -22,7 +22,7 @@ class m130524_201442_init extends Migration
             'nombre' => $this->string(50)->notNull(),
             'descripcion' => $this->string(100)->notNull(),
             'id_modulo' => $this->integer()->notNull(),
-            'fecha_creado' => $this->dateTime()->defaultValue('NOW()'),
+            'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
             'fecha_modificado' => $this->dateTime(),
             'fecha_eliminado' => $this->dateTime(),
         ], $tableOptions);
@@ -31,10 +31,8 @@ class m130524_201442_init extends Migration
         $this->createTable('{{%bancos}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
-
-            'fecha_creado' => $this->dateTime()->defaultValue('NOW()'),
+            'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
             'fecha_modificado' => $this->dateTime(),
-            'fecha_eliminado' => $this->dateTime(),
         ], $tableOptions);
 
         //Crear tabla de flores
@@ -43,7 +41,9 @@ class m130524_201442_init extends Migration
             'id_usuario' => $this->integer()->notNull(),
             'id_flor_dependiente' => $this->bigInteger(),
             'id_flor_padre' => $this->bigInteger(),
-            'fecha_creado' => $this->dateTime()->defaultValue('NOW()'),
+            'id_invitacion' => $this->bigInteger(),
+            'clave' => $this->string(9),
+            'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
             'fecha_terminado' => $this->dateTime(),
         ], $tableOptions);
 
@@ -60,17 +60,28 @@ class m130524_201442_init extends Migration
         //Crear tabla de modulos
         $this->createTable('{{%modulos}}',[
             'id' => $this->primaryKey(), //Llave primaria
+            'nombre' => $this->string(50)->notNull(),
+            'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
 
         //Crear tabla de notificaciones
         $this->createTable('{{%notificaciones}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
             'id_usuario' => $this->integer()->notNull(),
+            'contenido' => $this->text()->notNull(),
+            'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_leido' => $this->dateTime(),
         ], $tableOptions);
 
         //Crear tabla de invitaciones
         $this->createTable('{{%invitaciones}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
+            'id_usuario' => $this->integer(),
+            'id_invitado' => $this->integer(),
+            'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_aceptado' => $this->dateTime(),
+            'fecha_rechazado' => $this->dateTime(),
         ], $tableOptions);
 
         //Crear tabla de ordenes_pagos
@@ -86,11 +97,18 @@ class m130524_201442_init extends Migration
         //Crear tabla de planes
         $this->createTable('{{%planes}}',[
             'id' => $this->primaryKey(), //Llave primaria
+            'pago_flor' => $this->decimal(10,2)->defaultValue(0),
+            'ganancia_flor' => $this->decimal(10,2)->defaultValue(0),
+            'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
 
         //Crear tabla de roles
         $this->createTable('{{%roles}}',[
             'id' => $this->primaryKey(), //Llave primaria
+            'nombre' => $this->string(50)->notNull(),
+            'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
 
         //Crear tabla de ubicaciones
@@ -117,7 +135,7 @@ class m130524_201442_init extends Migration
             'id_ubicacion' => $this->integer()->notNull(), //Llave FORANEA de la tabla de ubicaciones
             'token' => $this->string(32)->unique(), //token para la validación de información por email
             
-            'fecha_creado' => $this->dateTime()->defaultValue('NOW()'),
+            'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
             'fecha_modificado' => $this->dateTime(),
             'fecha_eliminado' => $this->dateTime(),
 
@@ -140,14 +158,14 @@ class m130524_201442_init extends Migration
         ##################
 
         //Agregar llave foranea
-        $this->addForeignKey(
+        /*$this->addForeignKey(
             'fk-post-author_id',    //Nombre de la llave foranea
             'post',                 //Nombre de la tabla destino
             'author_id',            //Nombre del campo destino
             'user',                 //Nombre de la tabla origen
             'id',                   //Nombre del campo origen
             'CASCADE'
-        );
+        );*/
     }
 
     public function down()
