@@ -112,7 +112,22 @@ class m130524_201442_init extends Migration
         ], $tableOptions);
 
         //Crear tabla de ubicaciones
-        $this->createTable('{{%ubicaciones}}',[
+        $this->createTable('{{%localidades}}',[
+            'id' => $this->primaryKey(), //Llave primaria
+        ], $tableOptions);
+
+        //Crear tabla de ubicaciones
+        $this->createTable('{{%municipios}}',[
+            'id' => $this->primaryKey(), //Llave primaria
+        ], $tableOptions);
+
+        //Crear tabla de ubicaciones
+        $this->createTable('{{%estados}}',[
+            'id' => $this->primaryKey(), //Llave primaria
+        ], $tableOptions);
+
+        //Crear tabla de ubicaciones
+        $this->createTable('{{%paises}}',[
             'id' => $this->primaryKey(), //Llave primaria
         ], $tableOptions);
 
@@ -132,7 +147,7 @@ class m130524_201442_init extends Migration
             'cuenta_bancaria' => $this->bigInteger()->notNull(),
             'balance' => $this->decimal(10,2)->defaultValue(0),
             'id_banco' => $this->integer()->notNull(), //Llave FORANEA de la tabla de bancos
-            'id_ubicacion' => $this->integer()->notNull(), //Llave FORANEA de la tabla de ubicaciones
+            'id_localidad' => $this->integer()->notNull(), //Llave FORANEA de la tabla de ubicaciones
             'token' => $this->string(32)->unique(), //token para la validación de información por email
             
             'fecha_creado' => $this->dateTime()->defaultExpression('NOW()'),
