@@ -18,28 +18,10 @@ class m130524_201442_init extends Migration
 
         //Crear tabla de acciones
         $this->crearTablaAcciones($tableOptions);
-
         //Crear tabla de bancos
-        $this->createTable('{{%bancos}}',[
-            'id' => $this->primaryKey(), //Llave primaria
-            'nombre' => $this->string(50)->notNull(),
-            'recomendado' => $this->boolean(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
-            'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
-
+        $this->crearTablaBancos($tableOptions);
         //Crear tabla de flores
-        $this->createTable('{{%flores}}',[
-            'id' => $this->bigPrimaryKey(), //Llave primaria
-            'id_usuario' => $this->integer()->notNull(),
-            'id_flor_dependiente' => $this->bigInteger(),
-            'id_flor_padre' => $this->bigInteger(),
-            'id_invitacion' => $this->bigInteger(),
-            'clave' => $this->string(9),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
-            'fecha_terminado' => $this->dateTime(),
-        ], $tableOptions);
-
+        $this->crearTablaFlores($tableOptions);
         //Crear tabla de comisiones
         $this->createTable('{{%comisiones}}',[
             'id' => $this->primaryKey(), //Llave primaria
@@ -77,12 +59,8 @@ class m130524_201442_init extends Migration
         //Crear tabla de planes
         $this->crearTablaPlanes($tableOptions);
         //Crear tabla de roles
-        $this->createTable('{{%roles}}',[
-            'id' => $this->primaryKey(), //Llave primaria
-            'nombre' => $this->string(50)->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
-            'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        $this->crearTablaRoles($tableOptions);
+        
 
         //Crear tabla de colonias
         $this->crearTablaColonias($tableOptions);
@@ -220,12 +198,44 @@ class m130524_201442_init extends Migration
         ], $tableOptions);
     }
 
-    private function crearTablaModulos($tableOptions){
+    private function crearTablaAcciones($tableOptions){
         $this->createTable('{{%acciones}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
             'descripcion' => $this->string(100)->notNull(),
             'id_modulo' => $this->integer()->notNull(),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_modificado' => $this->dateTime(),
+        ], $tableOptions);
+    }
+
+    private function crearTablaBancos($tableOptions){
+        $this->createTable('{{%bancos}}',[
+            'id' => $this->primaryKey(), //Llave primaria
+            'nombre' => $this->string(50)->notNull(),
+            'recomendado' => $this->boolean(),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_modificado' => $this->dateTime(),
+        ], $tableOptions);
+    }
+
+    private function crearTablaFlores($tableOptions){
+        $this->createTable('{{%flores}}',[
+            'id' => $this->bigPrimaryKey(), //Llave primaria
+            'id_usuario' => $this->integer()->notNull(),
+            'id_flor_dependiente' => $this->bigInteger(),
+            'id_flor_padre' => $this->bigInteger(),
+            'id_invitacion' => $this->bigInteger(),
+            'clave' => $this->string(9),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_terminado' => $this->dateTime(),
+        ], $tableOptions);
+    }
+
+    private function crearTablaRoles($tableOptions){
+        $this->createTable('{{%roles}}',[
+            'id' => $this->primaryKey(), //Llave primaria
+            'nombre' => $this->string(50)->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
             'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
@@ -373,7 +383,6 @@ class m130524_201442_init extends Migration
         );
     }
 
-    
     private function eliminarLlaveForaneaUsuariosAccesos(){
         $this->dropForeignKey('fk-usuarios_accesos-id_usuario-usuarios-id');
     }
