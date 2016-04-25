@@ -23,45 +23,23 @@ class m130524_201442_init extends Migration
         //Crear tabla de flores
         $this->crearTablaFlores($tableOptions);
         //Crear tabla de comisiones
-        $this->createTable('{{%comisiones}}',[
-            'id' => $this->primaryKey(), //Llave primaria
-        ], $tableOptions);
-
+        $this->crearTablaComisiones($tableOptions);
         //Crear tabla de solicitudes_depositos
-        $this->createTable('{{%solicitudes_depositos}}',[
-            'id' => $this->bigPrimaryKey(), //Llave primaria
-        ], $tableOptions);
-
+        $this->crearTablaSolicitudesDepositos($tableOptions);
         //Crear tabla de modulos
         $this->crearTablaModulos($tableOptions);
-
         //Crear tabla de notificaciones
-        $this->createTable('{{%notificaciones}}',[
-            'id' => $this->bigPrimaryKey(), //Llave primaria
-            'id_usuario' => $this->integer()->notNull(),
-            'contenido' => $this->text()->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
-            'fecha_leido' => $this->dateTime(),
-        ], $tableOptions);
-
+        $this->crearTablaNotificaciones($tableOptions);
         //Crear tabla de invitaciones
         $this->crearTablaInvitaciones($tableOptions);
         //Crear tabla de ordenes_pagos
-        $this->createTable('{{%ordenes_pagos}}',[
-            'id' => $this->bigPrimaryKey(), //Llave primaria
-        ], $tableOptions);
-
+        $this->crearTablaOrdenesPagos($tableOptions);
         //Crear tabla de permisos
-        $this->createTable('{{%permisos}}',[
-            'id' => $this->primaryKey(), //Llave primaria
-        ], $tableOptions);
-
+        $this->crearTablaPermisos($tableOptions);
         //Crear tabla de planes
         $this->crearTablaPlanes($tableOptions);
         //Crear tabla de roles
         $this->crearTablaRoles($tableOptions);
-        
-
         //Crear tabla de colonias
         $this->crearTablaColonias($tableOptions);
         //Crear tabla de ciudades
@@ -189,7 +167,7 @@ class m130524_201442_init extends Migration
         ], $tableOptions);
     }
 
-    private function crearTablaModulos(&tableOptions){
+    private function crearTablaModulos($tableOptions){
         $this->createTable('{{%modulos}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
@@ -241,6 +219,34 @@ class m130524_201442_init extends Migration
         ], $tableOptions);
     }
 
+    private function crearTablaComisiones($tableOptions){
+        $this->createTable('{{%comisiones}}',[
+            'id' => $this->primaryKey(), //Llave primaria
+        ], $tableOptions);
+    }
+
+    private function crearTablaNotificaciones($tableOptions){
+        $this->createTable('{{%notificaciones}}',[
+            'id' => $this->bigPrimaryKey(), //Llave primaria
+            'id_usuario' => $this->integer()->notNull(),
+            'contenido' => $this->text()->notNull(),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_leido' => $this->dateTime(),
+        ], $tableOptions);
+    }
+
+    private function crearTablaOrdenesPagos($tableOptions){
+        $this->createTable('{{%ordenes_pagos}}',[
+            'id' => $this->bigPrimaryKey(), //Llave primaria
+        ], $tableOptions);
+    }
+
+    private function crearTablaPermisos($tableOptions){
+        $this->createTable('{{%permisos}}',[
+            'id' => $this->primaryKey(), //Llave primaria
+        ], $tableOptions);
+    }
+
     private function crearTablaColonias($tableOptions){
         $this->createTable('{{%colonias}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
@@ -249,6 +255,12 @@ class m130524_201442_init extends Migration
             'id_ciudad' => $this->integer()->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
             'fecha_modificado' => $this->dateTime(),
+        ], $tableOptions);
+    }
+
+    private function crearTablaSolicitudesDepositos($tableOptions){
+        $this->createTable('{{%solicitudes_depositos}}',[
+            'id' => $this->bigPrimaryKey(), //Llave primaria
         ], $tableOptions);
     }
 
