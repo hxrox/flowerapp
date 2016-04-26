@@ -34,6 +34,8 @@ class m130524_201442_init extends Migration
         $this->crearTablaInvitaciones($tableOptions);
         //Crear tabla de ordenes_pagos
         $this->crearTablaOrdenesPagos($tableOptions);
+        //Crear tabla de servicios_pagos
+        $this->crearTablaServiciosPagos($tableOptions);
         //Crear tabla de permisos
         $this->crearTablaPermisos($tableOptions);
         //Crear tabla de planes
@@ -238,6 +240,15 @@ class m130524_201442_init extends Migration
     private function crearTablaOrdenesPagos($tableOptions){
         $this->createTable('{{%ordenes_pagos}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
+        ], $tableOptions);
+    }
+
+    private function crearTablaServiciosPagos($tableOptions){
+        $this->createTable('{{%servicios_pagos}}',[
+            'id' => $this->primaryKey(), //Llave primaria
+            'nombre' => $this->string(50)->notNull(),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
 
