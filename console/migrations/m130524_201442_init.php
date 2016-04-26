@@ -15,7 +15,74 @@ class m130524_201442_init extends Migration
         ##################
         ################## Creación de tablas
         ##################
+        $this->crearTablas($tableOptions);
 
+        ##################
+        ################## Creación de indices
+        ##################
+
+        ##################
+        ################## Creación de llaves foraneas
+        ##################
+        $this->crearLlavesForaneas();
+        
+        ##################
+        ################## Creación de contenido para catálogos iniciales
+        ##################
+
+        //USUARIOS
+        //Catálogo para sexos
+        $this->agregarCatalogoSexos();
+        //Catálogo para bancos
+        $this->agregarCatalogoBancosMexico();
+        //Catálogo para paises
+        $this->agregarCatalogoPaises();
+        //Catálogo para estados
+        $this->agregarCatalogoEstados();
+        //Catálogo para ciudades
+        $this->agregarCatalogoCiudades();
+
+    }
+
+    public function down()
+    {
+        ##################
+        ################## Eliminación de llaves foraneas
+        ##################
+        $this->eliminarLlaveForaneaUsuarios();
+        $this->eliminarLlaveForaneaUsuariosAccesos();
+        $this->eliminarLlaveForaneaAcciones();
+        $this->eliminarLlaveForaneaColonias();
+        $this->eliminarLlaveForaneaCiudades();
+        $this->eliminarLlaveForaneaEstados();
+        $this->eliminarLlaveForaneaFlores();
+
+        ##################
+        ################## Eliminación de tablas
+        ##################
+        $this->dropTable('{{%acciones}}');
+        $this->dropTable('{{%bancos}}');
+        $this->dropTable('{{%flores}}');
+        $this->dropTable('{{%comisiones}}');
+        $this->dropTable('{{%solicitudes_depositos}}');
+        $this->dropTable('{{%modulos}}');
+        $this->dropTable('{{%notificaciones}}');
+        $this->dropTable('{{%invitaciones}}');
+        $this->dropTable('{{%ordenes_pagos}}');
+        $this->dropTable('{{%permisos}}');
+        $this->dropTable('{{%planes}}');
+        $this->dropTable('{{%roles}}');
+        $this->dropTable('{{%colonias}}');
+        $this->dropTable('{{%ciudades}}');
+        $this->dropTable('{{%estados}}');
+        $this->dropTable('{{%paises}}');
+        $this->dropTable('{{%usuarios}}');
+        $this->dropTable('{{%usuarios_accesos}}');
+        $this->dropTable('{{%sexos}}');
+        $this->dropTable('{{%tokens}}');
+    }
+
+    private function crearTablas($tableOptions){
         //Crear tabla de acciones
         $this->crearTablaAcciones($tableOptions);
         //Crear tabla de bancos
@@ -58,15 +125,9 @@ class m130524_201442_init extends Migration
         $this->crearTablaSexos($tableOptions);
         //Crear tabla de tokens
         $this->crearTablaTokens($tableOptions);
+    }
 
-        ##################
-        ################## Creación de indices
-        ##################
-
-        ##################
-        ################## Creación de llaves foraneas
-        ##################
-
+    private function crearLlavesForaneas(){
         $this->agregarLlaveForaneaUsuarios();
         $this->agregarLlaveForaneaUsuariosAccesos();
         $this->agregarLlaveForaneaAcciones();
@@ -74,60 +135,7 @@ class m130524_201442_init extends Migration
         $this->agregarLlaveForaneaColonias();
         $this->agregarLlaveForaneaCiudades();
         $this->agregarLlaveForaneaEstados();
-
-        ##################
-        ################## Creación de contenido para catálogos iniciales
-        ##################
-
-        //USUARIOS
-        //Catálogo para sexos
-        $this->agregarCatalogoSexos();
-        //Catálogo para bancos
-        $this->agregarCatalogoBancosMexico();
-        //Catálogo para paises
-        $this->agregarCatalogoPaises();
-        //Catálogo para estados
-        $this->agregarCatalogoEstados();
-        //Catálogo para ciudades
-        $this->agregarCatalogoCiudades();
-
-    }
-
-    public function down()
-    {
-        ##################
-        ################## Eliminación de llaves foraneas
-        ##################
-        $this->eliminarLlaveForaneaUsuarios();
-        $this->eliminarLlaveForaneaUsuariosAccesos();
-        $this->eliminarLlaveForaneaAcciones();
-        $this->eliminarLlaveForaneaColonias();
-        $this->eliminarLlaveForaneaCiudades();
-        $this->eliminarLlaveForaneaEstados();
-
-        ##################
-        ################## Eliminación de tablas
-        ##################
-        $this->dropTable('{{%acciones}}');
-        $this->dropTable('{{%bancos}}');
-        $this->dropTable('{{%flores}}');
-        $this->dropTable('{{%comisiones}}');
-        $this->dropTable('{{%solicitudes_depositos}}');
-        $this->dropTable('{{%modulos}}');
-        $this->dropTable('{{%notificaciones}}');
-        $this->dropTable('{{%invitaciones}}');
-        $this->dropTable('{{%ordenes_pagos}}');
-        $this->dropTable('{{%permisos}}');
-        $this->dropTable('{{%planes}}');
-        $this->dropTable('{{%roles}}');
-        $this->dropTable('{{%colonias}}');
-        $this->dropTable('{{%ciudades}}');
-        $this->dropTable('{{%estados}}');
-        $this->dropTable('{{%paises}}');
-        $this->dropTable('{{%usuarios}}');
-        $this->dropTable('{{%usuarios_accesos}}');
-        $this->dropTable('{{%sexos}}');
-        $this->dropTable('{{%tokens}}');
+        $this->agregarLlaveForaneaFlores();
     }
 
     private function crearTablaUsuarios($tableOptions){
@@ -149,7 +157,7 @@ class m130524_201442_init extends Migration
             'id_colonia' => $this->bigInteger()->notNull(), //Llave foránea a la tabla {{%colonias}}
             'id_token' => $this->integer(), //token para la validación de información por email
             
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
             'fecha_eliminado' => $this->dateTime(),
 
@@ -165,7 +173,7 @@ class m130524_201442_init extends Migration
             'id_usuario' => $this->integer()->notNull(),
             'user_agent' => $this->string(20)->notNull(), //Chrome
             'ip_address' => $this->string(15)->notNull(), //000.000.000.000
-            'fecha' => $this->dateTime()->defaultExpression('NOW()'), // 00/00/0000 00:00:00
+            'fecha' => $this->dateTime()->defaultExpression('NOW()'), //Fecha de creación del registro en la tabla
         ], $tableOptions);
     }
 
@@ -202,14 +210,20 @@ class m130524_201442_init extends Migration
     private function crearTablaFlores($tableOptions){
         $this->createTable('{{%flores}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
-            'id_usuario' => $this->integer()->notNull(),
-            'id_flor_dependiente' => $this->bigInteger(),
-            'id_flor_padre' => $this->bigInteger(),
-            'id_invitacion' => $this->bigInteger(),
-            'clave' => $this->string(9),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
-            'fecha_terminado' => $this->dateTime(),
+            'id_usuario' => $this->integer()->notNull(), //Aquien pertenece esta flor
+            'id_flor_dependiente' => $this->bigInteger(), //De que flor depende directamente
+            'id_flor_padre' => $this->bigInteger(), //A que flor beneficia directamente
+            'id_invitacion' => $this->bigInteger(), //De que invitacion se creó esta flor
+            'clave' => $this->string(9), //Clave dinámica
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'), //Fecha de creación del registro en la tabla
+            'fecha_terminado_dependencia' => $this->dateTime(), //Fecha en la que se completaron sus dependencias.
+            'fecha_terminado' => $this->dateTime(), //Fecha en la que termino todas su flor.
         ], $tableOptions);
+
+        /*
+        FALTA: Crear trigger que cuando una flor tenga dos flores dependientes este llene el campo
+        de fecha_terminado_dependencia por la fecha en la que se completaron sus dependencias.
+        */
     }
 
     private function crearTablaRoles($tableOptions){
@@ -224,6 +238,11 @@ class m130524_201442_init extends Migration
     private function crearTablaComisiones($tableOptions){
         $this->createTable('{{%comisiones}}',[
             'id' => $this->primaryKey(), //Llave primaria
+            'id_servicio_pago' => $this->integer(),
+            'comision_porcentaje' => $this->decimal(10,2)->notNull(),
+            'comision_precio' => $this->decimal(10,2)->notNull(),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
+            'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
 
@@ -232,14 +251,24 @@ class m130524_201442_init extends Migration
             'id' => $this->bigPrimaryKey(), //Llave primaria
             'id_usuario' => $this->integer()->notNull(),
             'contenido' => $this->text()->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_leido' => $this->dateTime(),
         ], $tableOptions);
     }
 
     private function crearTablaOrdenesPagos($tableOptions){
+        /*  
+            Esta tabla de ordenes de pagos identificarán que usuarios
+            que crearón solicitudes de pagos en cuanto a los servicios
+            de pago, esto para no duplicar ordenes de pago.
+        */
         $this->createTable('{{%ordenes_pagos}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
+            'id_servicio' => $this->integer()->notNull(),
+            'url_servicio_pago' => $this->string()->notNull(),
+            'estado' => $this->string(10),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
+            'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
 
@@ -247,7 +276,7 @@ class m130524_201442_init extends Migration
         $this->createTable('{{%servicios_pagos}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
@@ -255,7 +284,16 @@ class m130524_201442_init extends Migration
     private function crearTablaPermisos($tableOptions){
         $this->createTable('{{%permisos}}',[
             'id' => $this->primaryKey(), //Llave primaria
+            'id_rol' => $this->integer()->notNull(), //Llave foránea de la tabla de roles
+            'id_accion' => $this->integer()->notNull(), //Llave foránea de la tabla de acciones
+            'permitida' => $this->boolean(), //Saber si esta acción la tiene permitida dicho rol
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'), //Fecha de creación del registro en la tabla
+            'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
+
+        /*
+        FALTA: Estructura de la tabla
+        */
     }
 
     private function crearTablaColonias($tableOptions){
@@ -264,15 +302,30 @@ class m130524_201442_init extends Migration
             'nombre' => $this->string(50)->notNull(),
             'codigo_postal' => $this->integer()->notNull(),
             'id_ciudad' => $this->integer()->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
 
     private function crearTablaSolicitudesDepositos($tableOptions){
+        /*
+        Esta tabla tendrá la información de todos los usuarios que soliciten un depósito
+        a su cuenta bancaria que tienen previamente ligado.
+        */
         $this->createTable('{{%solicitudes_depositos}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
+            'id_usuario' => $this->integer()->notNull(),
+            'monto' => $this->decimal(10,2)->notNull(),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
+            'fecha_depositado' => $this->dateTime(),
         ], $tableOptions);
+        /*
+        Crear un trigger que al momento de el campo de fecha_depositado reciva un valor
+        este en automático deposite en la cuenta de usuario y se refleje que ya se 
+        realizo un depósito.
+        FALTA: Llaver foráneas
+        FALTA: Creación del trigger
+        */
     }
 
     private function crearTablaCiudades($tableOptions){
@@ -281,7 +334,7 @@ class m130524_201442_init extends Migration
             'nombre' => $this->string(50)->notNull(),
             'codigo' => $this->string(3)->notNull(),
             'id_estado' => $this->integer()->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
@@ -292,7 +345,7 @@ class m130524_201442_init extends Migration
             'nombre' => $this->string(50)->notNull(),
             'codigo' => $this->string(3)->notNull(),
             'id_pais' => $this->integer()->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
@@ -302,7 +355,7 @@ class m130524_201442_init extends Migration
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(25)->notNull(),
             'codigo' => $this->string(3)->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
@@ -312,7 +365,7 @@ class m130524_201442_init extends Migration
             'id' => $this->primaryKey(), //Llave primaria
             'pago_flor' => $this->decimal(10,2)->defaultValue(0),
             'ganancia_flor' => $this->decimal(10,2)->defaultValue(0),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
@@ -323,7 +376,7 @@ class m130524_201442_init extends Migration
             'id_usuario' => $this->integer(),
             'id_invitado' => $this->integer(),
             'id_plan' => $this->integer(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_aceptado' => $this->dateTime(),
             'fecha_rechazado' => $this->dateTime(),
         ], $tableOptions);
@@ -334,7 +387,7 @@ class m130524_201442_init extends Migration
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(20)->notNull(),
             'descripcion' => $this->string(100)->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
         ], $tableOptions);
     }
@@ -343,7 +396,7 @@ class m130524_201442_init extends Migration
         $this->createTable('{{%tokens}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'token' => $this->string(32)->notNull(),
-            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_utilizado' => $this->dateTime(),
         ], $tableOptions);
     }
@@ -473,6 +526,55 @@ class m130524_201442_init extends Migration
 
     private function eliminarLlaveForaneaEstados(){
         $this->dropForeignKey('fk-estados-id_pais-paises-id','{{%estados}}');
+    }
+
+    private function agregarLlaveForaneaFlores(){
+        //Flores<<<Usuarios
+        $this->addForeignKey(
+            'fk-flores-id_usuario-usuarios-id',
+            '{{%flores}}',                    
+            'id_usuario',                          
+            '{{%usuarios}}',                       
+            'id',                               
+            'CASCADE'
+        );
+
+        //Flores<<<Flores
+        $this->addForeignKey(
+            'fk-flores-id_flor_dependiente-flores-id',
+            '{{%flores}}',                    
+            'id_flor_dependiente',                          
+            '{{%flores}}',                       
+            'id',                               
+            'CASCADE'
+        );
+
+        //Flores<<<Flores
+        $this->addForeignKey(
+            'fk-flores-id_flor_padre-flores-id',
+            '{{%flores}}',                    
+            'id_flor_padre',                          
+            '{{%flores}}',                       
+            'id',                               
+            'CASCADE'
+        );
+
+        //Flores<<<Invitaciones
+        $this->addForeignKey(
+            'fk-flores-id_invitacion-invitaciones-id',
+            '{{%flores}}',                    
+            'id_invitacion',                          
+            '{{%invitaciones}}',                       
+            'id',                               
+            'CASCADE'
+        );
+    }
+
+    private function eliminarLlaveForaneaFlores(){
+        $this->dropForeignKey('fk-flores-id_usuario-usuarios-id','{{%flores}}');
+        $this->dropForeignKey('fk-flores-id_flor_dependiente-flores-id','{{%flores}}');
+        $this->dropForeignKey('fk-flores-id_flor_padre-flores-id','{{%flores}}');
+        $this->dropForeignKey('fk-flores-id_invitacion-invitaciones-id','{{%flores}}');
     }
 
     private function agregarCatalogoSexos()
