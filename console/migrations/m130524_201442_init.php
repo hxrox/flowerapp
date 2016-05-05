@@ -25,22 +25,17 @@ class m130524_201442_init extends Migration
         ################## Creación de llaves foraneas
         ##################
         $this->crearLlavesForaneas();
+
+        ##################
+        ################## Creación de triggers
+        ##################
+        $this->crearTriggers();
         
         ##################
         ################## Creación de contenido para catálogos iniciales
         ##################
-
-        //USUARIOS
-        //Catálogo para sexos
-        $this->agregarCatalogoSexos();
-        //Catálogo para bancos
-        $this->agregarCatalogoBancosMexico();
-        //Catálogo para paises
-        $this->agregarCatalogoPaises();
-        //Catálogo para estados
-        $this->agregarCatalogoEstados();
-        //Catálogo para ciudades
-        $this->agregarCatalogoCiudades();
+        $this->cargarCatalogosContenidoInicial();
+        
 
     }
 
@@ -356,7 +351,6 @@ class m130524_201442_init extends Migration
         Crear un trigger que al momento de el campo de fecha_depositado reciba un valor
         este en automático deposite en la cuenta de usuario y se refleje que ya se 
         realizo un depósito.
-        FALTA: Llaver foráneas
         FALTA: Creación del trigger
         */
     }
@@ -749,6 +743,23 @@ class m130524_201442_init extends Migration
     ##################################################################################
     ##################################################################################
 
+    private function cargarCatalogosContenidoInicial(){
+        //Catálogo para sexos
+        $this->agregarCatalogoSexos();
+        //Catálogo para bancos
+        $this->agregarCatalogoBancosMexico();
+        //Catálogo para paises
+        $this->agregarCatalogoPaises();
+        //Catálogo para estados
+        $this->agregarCatalogoEstados();
+        //Catálogo para ciudades
+        $this->agregarCatalogoCiudades();
+        //Catálogo para colonias
+        $this->agregarCatalogoColonias();
+        //Catálogo para usuarios iniciales
+        $this->agregarCatalogoUsuarios();
+    }
+
     private function agregarCatalogoSexos()
     {
         $this->batchInsert('{{%sexos}}',['nombre','descripcion'],[
@@ -870,5 +881,37 @@ class m130524_201442_init extends Migration
                 //Chiapas
                 ['Acacoyagua','001', 5],['Acala','002', 5],['Acapetahua','003', 5],['Altamirano','004', 5],['Amatán','005', 5],['Amatenango de la Frontera','006', 5],['Amatenango del Valle','007', 5],['Angel Albino Corzo','008', 5],['Arriaga','009', 5],['Bejucal de Ocampo','010', 5],['Bella Vista','011', 5],['Berriozábal','012', 5],['Bochil','013', 5],['El Bosque','014', 5],['Cacahoatán','015', 5],['Catazajá','016', 5],['Cintalapa','017', 5],['Coapilla','018', 5],['Comitán de Domínguez','019', 5],['La Concordia','020', 5],['Copainalá','021', 5],['Chalchihuitán','022', 5],['Chamula','023', 5],['Chanal','024', 5],['Chapultenango','025', 5],['Chenalhó','026', 5],['Chiapa de Corzo','027', 5],['Chiapilla','028', 5],['Chicoasén','029', 5],['Chicomuselo','030', 5],['Chilón','031', 5],['Escuintla','032', 5],['Francisco León','033', 5],['Frontera Comalapa','034', 5],['Frontera Hidalgo','035', 5],['La Grandeza','036', 5],['Huehuetán','037', 5],['Huixtán','038', 5],['Huitiupán','039', 5],['Huixtla','040', 5],['La Independencia','041', 5],['Ixhuatán','042', 5],['Ixtacomitán','043', 5],['Ixtapa','044', 5],['Ixtapangajoya','045', 5],['Jiquipilas','046', 5],['Jitotol','047', 5],['Juárez','048', 5],['Larráinzar','049', 5],['La Libertad','050', 5],['Mapastepec','051', 5],['Las Margaritas','052', 5],['Mazapa de Madero','053', 5],['Mazatán','054', 5],['Metapa','055', 5],['Mitontic','056', 5],['Motozintla','057', 5],['Nicolás Ruíz','058', 5],['Ocosingo','059', 5],['Ocotepec','060', 5],['Ocozocoautla de Espinosa','061', 5],['Ostuacán','062', 5],['Osumacinta','063', 5],['Oxchuc','064', 5],['Palenque','065', 5],['Pantelhó','066', 5],['Pantepec','067', 5],['Pichucalco','068', 5],['Pijijiapan','069', 5],['El Porvenir','070', 5],['Villa Comaltitlán','071', 5],['Pueblo Nuevo Solistahuacán','072', 5],['Rayón','073', 5],['Reforma','074', 5],['Las Rosas','075', 5],['Sabanilla','076', 5],['Salto de Agua','077', 5],['San Cristóbal de las Casas','078', 5],['San Fernando','079', 5],['Siltepec','080', 5],['Simojovel','081', 5],['Sitalá','082', 5],['Socoltenango','083', 5],['Solosuchiapa','084', 5],['Soyaló','085', 5],['Suchiapa','086', 5],['Suchiate','087', 5],['Sunuapa','088', 5],['Tapachula','089', 5],['Tapalapa','090', 5],['Tapilula','091', 5],['Tecpatán','092', 5],['Tenejapa','093', 5],['Teopisca','094', 5],['Tila','096', 5],['Tonalá','097', 5],['Totolapa','098', 5],['La Trinitaria','099', 5],['Tumbalá','100', 5],['Tuxtla Gutiérrez','101', 5],['Tuxtla Chico','102', 5],['Tuzantán','103', 5],['Tzimol','104', 5],['Unión Juárez','105', 5],['Venustiano Carranza','106', 5],['Villa Corzo','107', 5],['Villaflores','108', 5],['Yajalón','109', 5],['San Lucas','110', 5],['Zinacantán','111', 5],['San Juan Cancuc','112', 5],['Aldama','113', 5],['Benemérito de las Américas','114', 5],['Maravilla Tenejapa','115', 5],['Marqués de Comillas','116', 5],['Montecristo de Guerrero','117', 5],['San Andrés Duraznal','118', 5],['Santiago el Pinar','119', 5],
             ]);
+    }
+
+    public function agregarCatalogoColonias(){
+        $this->batchInsert('{{%colonias}}',['nombre','codigo_postal','id_ciudad'],[
+            ['Tester',12345,1]
+        ]);
+    }
+
+    private function agregarCatalogoUsuarios(){
+        $this->batchInsert('{{%usuarios}}',['email','password_hash','auth_key','nombres','apellidos','id_sexo','fecha_nacimiento','contacto_telefonico','domicilio','cuenta_bancaria','id_banco','id_colonia','status','created_at','updated_at'],[
+            ['admin@admin.com','$2y$13$W2eLUsjsPF87gRZkGz0voOuu4YJk9ovf3tOucHfayjhWl4apVclfS','99WNfnBPVRRJvPdXUrE6k2Za7hhD9-he','Administrador','FlowerApp',1,'1990-01-01','1234567890','Domicilio','0123456789',1,1,10,1461797582,1461797582],
+            ]);
+    }
+
+    ##################################################################################
+    #################################TRIGGERS#########################################
+    ##################################################################################
+    ##################################################################################
+
+    private function crearTriggers(){
+        $this->crearTriggerSolicitudDepostios();
+    }
+
+    private function crearTriggerSolicitudDepostios(){
+        $sql = "CREATE TRIGGER tgr_solicitudes_depositos_fecha_depositado AFTER UPDATE ON {{%solicitudes_depositos}}
+                FOR EACH ROW
+                BEGIN
+
+                    UPDATE {{%usuarios}} SET balance = balance + new.monto WHERE id= new.id_usuario;
+
+                END;";
+        $this->execute($sql);
     }
 }
