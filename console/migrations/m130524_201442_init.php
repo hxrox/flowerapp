@@ -4,18 +4,20 @@ use yii\db\Migration;
 
 class m130524_201442_init extends Migration
 {
+    private $tableOptions;
+
     public function up()
     {
         //Opciones para la creación de tablas
-        $tableOptions = null;
+        $this->tableOptions = null;
         if ($this->db->driverName === 'mysql') {
-            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
+            $this->tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
         ##################
         ################## Creación de tablas
         ##################
-        $this->crearTablas($tableOptions);
+        $this->crearTablas();
 
         ##################
         ################## Creación de indices
@@ -69,53 +71,56 @@ class m130524_201442_init extends Migration
         $this->dropTable('{{%usuarios_accesos}}');
         $this->dropTable('{{%sexos}}');
         $this->dropTable('{{%tokens}}');
+        $this->dropTable('{{%cuentas_bancarias}}');
     }
 
-    private function crearTablas($tableOptions){
+    private function crearTablas(){
         //Crear tabla de acciones
-        $this->crearTablaAcciones($tableOptions);
+        $this->crearTablaAcciones();
         //Crear tabla de bancos
-        $this->crearTablaBancos($tableOptions);
+        $this->crearTablaBancos();
         //Crear tabla de flores
-        $this->crearTablaFlores($tableOptions);
+        $this->crearTablaFlores();
         //Crear tabla de comisiones
-        $this->crearTablaComisiones($tableOptions);
+        $this->crearTablaComisiones();
         //Crear tabla de solicitudes_depositos
-        $this->crearTablaSolicitudesDepositos($tableOptions);
+        $this->crearTablaSolicitudesDepositos();
         //Crear tabla de modulos
-        $this->crearTablaModulos($tableOptions);
+        $this->crearTablaModulos();
         //Crear tabla de notificaciones
-        $this->crearTablaNotificaciones($tableOptions);
+        $this->crearTablaNotificaciones();
         //Crear tabla de invitaciones
-        $this->crearTablaInvitaciones($tableOptions);
+        $this->crearTablaInvitaciones();
         //Crear tabla de ordenes_pagos
-        $this->crearTablaOrdenesPagos($tableOptions);
+        $this->crearTablaOrdenesPagos();
         //Crear tabla de servicios_pagos
-        $this->crearTablaServiciosPagos($tableOptions);
+        $this->crearTablaServiciosPagos();
         //Crear tabla de permisos
-        $this->crearTablaPermisos($tableOptions);
+        $this->crearTablaPermisos();
         //Crear tabla de planes
-        $this->crearTablaPlanes($tableOptions);
+        $this->crearTablaPlanes();
         //Crear tabla de roles
-        $this->crearTablaRoles($tableOptions);
+        $this->crearTablaRoles();
         //Crear tabla de colonias
-        $this->crearTablaColonias($tableOptions);
+        $this->crearTablaColonias();
         //Crear tabla de ciudades
-        $this->crearTablaCiudades($tableOptions);
+        $this->crearTablaCiudades();
         //Crear tabla de estados
-        $this->crearTablaEstados($tableOptions);
+        $this->crearTablaEstados();
         //Crear tabla de paises
-        $this->crearTablaPaises($tableOptions);
+        $this->crearTablaPaises();
         //Crear tabla de usuarios
-        $this->crearTablaUsuarios($tableOptions);
+        $this->crearTablaUsuarios();
         //Crear tabla de usuarios_accesos
-        $this->crearTablaUsuariosAccesos($tableOptions);
+        $this->crearTablaUsuariosAccesos();
         //Crear tabla de usuarios_roles
-        $this->crearTablaUsuariosRoles($tableOptions);
+        $this->crearTablaUsuariosRoles();
         //Crear tabla de sexos
-        $this->crearTablaSexos($tableOptions);
+        $this->crearTablaSexos();
         //Crear tabla de tokens
-        $this->crearTablaTokens($tableOptions);
+        $this->crearTablaTokens();
+        //Crear tabla de cuentas_bancarias
+        $this->crearTablaCuentasBancarias();
     }
 
     private function crearLlavesForaneas(){
@@ -160,7 +165,7 @@ class m130524_201442_init extends Migration
         $this->eliminarLlaveForaneaSolicitudesDepositos();
     }
 
-    private function crearTablaUsuarios($tableOptions){
+    private function crearTablaUsuarios(){
         $this->createTable('{{%usuarios}}', [
             'id' => $this->primaryKey(), //Llave primaria
             'email' => $this->string(50)->notNull()->unique(),//Correo electrónico para la autenticación de credenciales
@@ -173,10 +178,8 @@ class m130524_201442_init extends Migration
             'fecha_nacimiento' => $this->date()->notNull(),//Fecha de nacimiento del usuario
             'contacto_telefonico' => $this->string(10)->notNull(),//Número telefónico del usuario
             'domicilio' => $this->string(100)->notNull(), //Domiicilio del usuario
-            'cuenta_bancaria' => $this->string(18)->notNull(),//Cuenta bancaria del usuario
-            'balance' => $this->decimal(10,2)->defaultValue(0), // Balance de la cuenta del usuario (Ganado en la aplicación)
-            'id_banco' => $this->integer()->notNull(), //Llave foránea a la tabla {{%bancos}}
             'id_colonia' => $this->bigInteger()->notNull(), //Llave foránea a la tabla {{%colonias}}
+            'balance' => $this->decimal(10,2)->defaultValue(0), // Balance de la cuenta del usuario (Ganado en la aplicación)
             
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(), //Fecha de modificación del registro en la tabla
@@ -185,40 +188,51 @@ class m130524_201442_init extends Migration
             'status' => $this->smallInteger()->notNull()->defaultValue(10),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
         //FALTA: Crear trigger para cuando fecha_eliminado reciva un dato, concatenar el email con ELIMINADO y el status en 20.
     }
 
-    private function crearTablaUsuariosAccesos($tableOptions){
+    private function crearTablaCuentasBancarias(){
+        $this->createTable('{{%cuentas_bancarias}}',[
+            'id' => $this->bigPrimaryKey(), //Llave primaria
+            'id_usuario' => $this->integer()->notNull(),
+            'cuenta_bancaria' => $this->string(18)->notNull(),//Cuenta bancaria del usuario
+            'id_banco' => $this->integer()->notNull(), //Llave foránea a la tabla {{%bancos}}
+            'token' => $this->string(32)->notNull(),
+            'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'), //Fecha de creación del registro en la tabla
+        ], $this->tableOptions);
+    }
+
+    private function crearTablaUsuariosAccesos(){
         $this->createTable('{{%usuarios_accesos}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
             'id_usuario' => $this->integer()->notNull(),
             'user_agent' => $this->string(20)->notNull(), //Chrome
             'ip_address' => $this->string(15)->notNull(), //000.000.000.000
             'fecha' => $this->dateTime()->defaultExpression('NOW()'), //Fecha de creación del registro en la tabla
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaUsuariosRoles($tableOptions){
+    private function crearTablaUsuariosRoles(){
         $this->createTable('{{%usuarios_roles}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
             'id_usuario' => $this->integer()->notNull(),
             'id_rol' => $this->integer()->notNull(),
             'fecha' => $this->dateTime()->defaultExpression('NOW()'), //Fecha de creación del registro en la tabla
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaModulos($tableOptions){
+    private function crearTablaModulos(){
         $this->createTable('{{%modulos}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(), //Nombre del registro de la tabla
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(), //Fecha de modificación del registro en la tabla
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaAcciones($tableOptions){
+    private function crearTablaAcciones(){
         $this->createTable('{{%acciones}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
@@ -226,20 +240,20 @@ class m130524_201442_init extends Migration
             'id_modulo' => $this->integer()->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaBancos($tableOptions){
+    private function crearTablaBancos(){
         $this->createTable('{{%bancos}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
             'recomendado' => $this->boolean(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaFlores($tableOptions){
+    private function crearTablaFlores(){
         $this->createTable('{{%flores}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
             'id_usuario' => $this->integer()->notNull(), //Aquien pertenece esta flor
@@ -250,7 +264,7 @@ class m130524_201442_init extends Migration
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'), //Fecha de creación del registro en la tabla
             'fecha_terminado_dependencia' => $this->dateTime(), //Fecha en la que se completaron sus dependencias.
             'fecha_terminado' => $this->dateTime(), //Fecha en la que termino todas su flor.
-        ], $tableOptions);
+        ], $this->tableOptions);
 
         /*
         FALTA: Crear trigger que cuando una flor tenga dos flores dependientes este llene el campo
@@ -258,16 +272,16 @@ class m130524_201442_init extends Migration
         */
     }
 
-    private function crearTablaRoles($tableOptions){
+    private function crearTablaRoles(){
         $this->createTable('{{%roles}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaComisiones($tableOptions){
+    private function crearTablaComisiones(){
         $this->createTable('{{%comisiones}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'id_servicio_pago' => $this->integer(),
@@ -275,20 +289,20 @@ class m130524_201442_init extends Migration
             'comision_precio' => $this->decimal(10,2)->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaNotificaciones($tableOptions){
+    private function crearTablaNotificaciones(){
         $this->createTable('{{%notificaciones}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
             'id_usuario' => $this->integer()->notNull(),
             'contenido' => $this->text()->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_leido' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaOrdenesPagos($tableOptions){
+    private function crearTablaOrdenesPagos(){
         /*  
             Esta tabla de ordenes de pagos identificarán que usuarios
             que crearón solicitudes de pagos en cuanto a los servicios
@@ -301,19 +315,19 @@ class m130524_201442_init extends Migration
             'estado' => $this->string(10),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaServiciosPagos($tableOptions){
+    private function crearTablaServiciosPagos(){
         $this->createTable('{{%servicios_pagos}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaPermisos($tableOptions){
+    private function crearTablaPermisos(){
         $this->createTable('{{%permisos}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'id_rol' => $this->integer()->notNull(), //Llave foránea de la tabla de roles
@@ -321,10 +335,10 @@ class m130524_201442_init extends Migration
             'permitida' => $this->boolean(), //Saber si esta acción la tiene permitida dicho rol
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'), //Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaColonias($tableOptions){
+    private function crearTablaColonias(){
         $this->createTable('{{%colonias}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
@@ -332,10 +346,10 @@ class m130524_201442_init extends Migration
             'id_ciudad' => $this->integer()->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaSolicitudesDepositos($tableOptions){
+    private function crearTablaSolicitudesDepositos(){
         /*
         Esta tabla tendrá la información de todos los usuarios que soliciten un depósito
         a su cuenta bancaria que tienen previamente ligado.
@@ -346,7 +360,7 @@ class m130524_201442_init extends Migration
             'monto' => $this->decimal(10,2)->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_depositado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
         /*
         Crear un trigger que al momento de el campo de fecha_depositado reciba un valor
         este en automático deposite en la cuenta de usuario y se refleje que ya se 
@@ -355,7 +369,7 @@ class m130524_201442_init extends Migration
         */
     }
 
-    private function crearTablaCiudades($tableOptions){
+    private function crearTablaCiudades(){
         $this->createTable('{{%ciudades}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
@@ -363,10 +377,10 @@ class m130524_201442_init extends Migration
             'id_estado' => $this->integer()->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaEstados($tableOptions){
+    private function crearTablaEstados(){
         $this->createTable('{{%estados}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(50)->notNull(),
@@ -374,30 +388,30 @@ class m130524_201442_init extends Migration
             'id_pais' => $this->integer()->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaPaises($tableOptions){
+    private function crearTablaPaises(){
         $this->createTable('{{%paises}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(25)->notNull(),
             'codigo' => $this->string(3)->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaPlanes($tableOptions){
+    private function crearTablaPlanes(){
         $this->createTable('{{%planes}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'pago_flor' => $this->decimal(10,2)->defaultValue(0),
             'ganancia_flor' => $this->decimal(10,2)->defaultValue(0),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaInvitaciones($tableOptions){
+    private function crearTablaInvitaciones(){
         $this->createTable('{{%invitaciones}}',[
             'id' => $this->bigPrimaryKey(), //Llave primaria
             'id_usuario' => $this->integer()->notNull(),
@@ -406,27 +420,27 @@ class m130524_201442_init extends Migration
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_aceptado' => $this->dateTime(),
             'fecha_rechazado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaSexos($tableOptions){
+    private function crearTablaSexos(){
         $this->createTable('{{%sexos}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'nombre' => $this->string(20)->notNull(),
             'descripcion' => $this->string(100)->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_modificado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
-    private function crearTablaTokens($tableOptions){
+    private function crearTablaTokens(){
         $this->createTable('{{%tokens}}',[
             'id' => $this->primaryKey(), //Llave primaria
             'id_usuario' => $this->integer(),
             'token' => $this->string(32)->notNull(),
             'fecha_creacion' => $this->dateTime()->defaultExpression('NOW()'),//Fecha de creación del registro en la tabla
             'fecha_utilizado' => $this->dateTime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
     }
 
     private function agregarLlaveForaneaUsuarios(){
